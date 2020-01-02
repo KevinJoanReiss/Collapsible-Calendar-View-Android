@@ -58,7 +58,7 @@ public abstract class UICalendar extends LinearLayout {
 
     // Attributes
     private boolean mShowWeek = true;
-    private int mFirstDayOfWeek = SUNDAY;
+    private int mFirstDayOfWeek = MONDAY;
     private int mState = STATE_COLLAPSED;
 
     private int mTextColor = Color.BLACK;
