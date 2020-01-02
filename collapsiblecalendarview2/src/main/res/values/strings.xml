@@ -1,11 +1,25 @@
 <resources>
     <string name="app_name">CollapsibleCalendarView</string>
 
-    <string name="monday">MON</string>
-    <string name="tuesday">TUE</string>
-    <string name="wednesday">WED</string>
-    <string name="thursday">THU</string>
-    <string name="friday">FRI</string>
-    <string name="saturday">SAT</string>
-    <string name="sunday">SUN</string>
+    <string name="calendar_monday">MON</string>
+    <string name="calendar_tuesday">TUE</string>
+    <string name="calendar_wednesday">WED</string>
+    <string name="calendar_thursday">THU</string>
+    <string name="calendar_friday">FRI</string>
+    <string name="calendar_saturday">SAT</string>
+    <string name="calendar_sunday">SUN</string>
+
+    <string name="calendar_january">Jan</string>
+    <string name="calendar_february">Feb</string>
+    <string name="calendar_march">Mar</string>
+    <string name="calendar_april">Apr</string>
+    <string name="calendar_may">May</string>
+    <string name="calendar_june">Jun</string>
+    <string name="calendar_july">Jul</string>
+    <string name="calendar_august">Aug</string>
+    <string name="calendar_september">Sep</string>
+    <string name="calendar_october">Oct</string>
+    <string name="calendar_november">Nov</string>
+    <string name="calendar_december">Dez</string>
+
 </resources>

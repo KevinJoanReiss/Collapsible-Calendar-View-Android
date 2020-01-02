@@ -9,8 +9,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -25,9 +23,9 @@ import com.shrikanthravi.collapsiblecalendarview.R;
 import com.shrikanthravi.collapsiblecalendarview.data.CalendarAdapter;
 import com.shrikanthravi.collapsiblecalendarview.data.Day;
 import com.shrikanthravi.collapsiblecalendarview.data.Event;
+import com.shrikanthravi.collapsiblecalendarview.util.DateUtils;
 import com.shrikanthravi.collapsiblecalendarview.view.ExpandIconView;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class CollapsibleCalendar extends UICalendar {
@@ -185,9 +183,10 @@ public class CollapsibleCalendar extends UICalendar {
             mAdapter.refresh();
 
             // reset UI
-            SimpleDateFormat dateFormat = new SimpleDateFormat("MMM yyyy");
-            dateFormat.setTimeZone(mAdapter.getCalendar().getTimeZone());
-            mTxtTitle.setText(dateFormat.format(mAdapter.getCalendar().getTime()));
+            mTxtTitle.setText(DateUtils.getFormattedDateString(
+                    getContext(),
+                    mAdapter.getCalendar().getTime())
+            );
             mTableHead.removeAllViews();
             mTableBody.removeAllViews();
 
@@ -195,13 +194,13 @@ public class CollapsibleCalendar extends UICalendar {
 
             // set day of week
             int[] dayOfWeekIds = {
-                    R.string.sunday,
-                    R.string.monday,
-                    R.string.tuesday,
-                    R.string.wednesday,
-                    R.string.thursday,
-                    R.string.friday,
-                    R.string.saturday
+                    R.string.calendar_sunday,
+                    R.string.calendar_monday,
+                    R.string.calendar_tuesday,
+                    R.string.calendar_wednesday,
+                    R.string.calendar_thursday,
+                    R.string.calendar_friday,
+                    R.string.calendar_saturday
             };
             rowCurrent = new TableRow(mContext);
             rowCurrent.setLayoutParams(new TableLayout.LayoutParams(
