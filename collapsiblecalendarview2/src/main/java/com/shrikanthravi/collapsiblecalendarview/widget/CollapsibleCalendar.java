@@ -7,6 +7,7 @@ package com.shrikanthravi.collapsiblecalendarview.widget;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.View;
@@ -32,6 +33,7 @@ public class CollapsibleCalendar extends UICalendar {
 
     private CalendarAdapter mAdapter;
     private CalendarListener mListener;
+    private DayEvaluator mDayEvaluator;
 
     private boolean expanded=false;
 
@@ -159,7 +161,17 @@ public class CollapsibleCalendar extends UICalendar {
                 Day day = mAdapter.getItem(i);
                 View view = mAdapter.getView(i);
                 TextView txtDay = (TextView) view.findViewById(R.id.txt_day);
-                txtDay.setBackgroundColor(Color.TRANSPARENT);
+                Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
+                if(mDayEvaluator != null) {
+                    if(mDayEvaluator.doesRatingExistForDay(day)) {
+                        if(mDayEvaluator.isDayRatedPositive(day)) {
+                            dayBackgroundDrawable = mPositiveDayBackgroundDrawable;
+                        } else {
+                            dayBackgroundDrawable = mNegativeDayBackgroundDrawable;
+                        }
+                    }
+                }
+                txtDay.setBackgroundDrawable(dayBackgroundDrawable);
                 txtDay.setTextColor(getTextColor());
 
                 // set today's item
@@ -577,9 +589,20 @@ public class CollapsibleCalendar extends UICalendar {
         }
     }
 
+    public void setDayEvaluator(DayEvaluator evaluator) { mDayEvaluator = evaluator; }
+
     // callback
     public void setCalendarListener(CalendarListener listener) {
         mListener = listener;
+    }
+
+    public interface DayEvaluator {
+
+        // check if a rating does exist for a specific day
+        boolean doesRatingExistForDay(Day day);
+
+        // check if the given day is rated positive
+        boolean isDayRatedPositive(Day day);
     }
 
     public interface CalendarListener {

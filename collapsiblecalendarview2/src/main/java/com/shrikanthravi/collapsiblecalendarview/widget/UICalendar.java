@@ -1,16 +1,13 @@
 package com.shrikanthravi.collapsiblecalendarview.widget;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -65,6 +62,12 @@ public abstract class UICalendar extends LinearLayout {
     private int mPrimaryColor = Color.WHITE;
 
     private int mTodayItemTextColor = Color.BLACK;
+    protected Drawable mNeutralDayBackgroundDrawable =
+            getResources().getDrawable(R.drawable.circle_transparent_background);
+    protected Drawable mPositiveDayBackgroundDrawable =
+            getResources().getDrawable(R.drawable.circle_transparent_background);
+    protected Drawable mNegativeDayBackgroundDrawable =
+            getResources().getDrawable(R.drawable.circle_transparent_background);
     private Drawable mTodayItemBackgroundDrawable =
             getResources().getDrawable(R.drawable.circle_black_stroke_background);
     private int mSelectedItemTextColor = Color.WHITE;
@@ -171,6 +174,24 @@ public abstract class UICalendar extends LinearLayout {
             setButtonLeftDrawable(buttonLeftDrawable);
         } else {
             setButtonLeftDrawable(mButtonLeftDrawable);
+        }
+
+        Drawable neutralDayBackgroundDrawable =
+                attrs.getDrawable(R.styleable.UICalendar_neutralDay_background);
+        if(neutralDayBackgroundDrawable != null) {
+            mNeutralDayBackgroundDrawable = neutralDayBackgroundDrawable;
+        }
+
+        Drawable positiveDayBackgroundDrawable =
+                attrs.getDrawable(R.styleable.UICalendar_positiveDay_background);
+        if(positiveDayBackgroundDrawable != null) {
+            mPositiveDayBackgroundDrawable = positiveDayBackgroundDrawable;
+        }
+
+        Drawable negativeDayBackgroundDrawable =
+                attrs.getDrawable(R.styleable.UICalendar_negativeDay_background);
+        if(negativeDayBackgroundDrawable != null) {
+            mNegativeDayBackgroundDrawable = negativeDayBackgroundDrawable;
         }
 
         Drawable buttonRightDrawable =
