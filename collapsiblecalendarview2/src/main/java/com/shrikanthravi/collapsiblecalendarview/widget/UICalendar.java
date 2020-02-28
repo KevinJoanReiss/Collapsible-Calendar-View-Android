@@ -86,6 +86,9 @@ public abstract class UICalendar extends LinearLayout {
 
     private int mExpandIconColor = Color.BLACK;
     private int mEventColor=Color.BLACK;
+    protected int mTodayNeutralEventTagColor = Color.BLACK;
+    protected int mTodayPositiveEventTagColor = Color.BLACK;
+    protected int mTodayNegativeEventTagColor = Color.BLACK;
 
     public UICalendar(Context context) {
         this(context, null);
@@ -192,6 +195,24 @@ public abstract class UICalendar extends LinearLayout {
                 attrs.getDrawable(R.styleable.UICalendar_negativeDay_background);
         if(negativeDayBackgroundDrawable != null) {
             mNegativeDayBackgroundDrawable = negativeDayBackgroundDrawable;
+        }
+
+        int todayNeutralEventTagColor =
+                attrs.getColor(R.styleable.UICalendar_neutralDayTag_color, mTodayNeutralEventTagColor);
+        if(todayNeutralEventTagColor != mTodayNeutralEventTagColor) {
+            mTodayNeutralEventTagColor = todayNeutralEventTagColor;
+        }
+
+        int todayPositiveEventTagColor =
+                attrs.getColor(R.styleable.UICalendar_positiveDayTag_color, mTodayPositiveEventTagColor);
+        if(todayPositiveEventTagColor != mTodayPositiveEventTagColor) {
+            mTodayPositiveEventTagColor = todayPositiveEventTagColor;
+        }
+
+        int todayNegativeEventTagColor =
+                attrs.getColor(R.styleable.UICalendar_negativeDayTag_color, mTodayNegativeEventTagColor);
+        if(todayPositiveEventTagColor != mTodayNegativeEventTagColor) {
+            mTodayNegativeEventTagColor = todayNegativeEventTagColor;
         }
 
         Drawable buttonRightDrawable =

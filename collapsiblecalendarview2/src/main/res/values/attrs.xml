@@ -50,6 +50,10 @@
         <attr name="positiveDay_background" format="integer" />
         <attr name="negativeDay_background" format="integer" />
 
+        <attr name="neutralDayTag_color" format="integer" />
+        <attr name="positiveDayTag_color" format="integer" />
+        <attr name="negativeDayTag_color" format="integer" />
+
         <attr name="buttonLeft_drawableTintColor" format="color" />
         <attr name="buttonRight_drawableTintColor" format="color" />
 

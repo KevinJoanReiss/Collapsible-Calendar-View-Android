@@ -28,6 +28,7 @@ import com.shrikanthravi.collapsiblecalendarview.util.DateUtils;
 import com.shrikanthravi.collapsiblecalendarview.view.ExpandIconView;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class CollapsibleCalendar extends UICalendar {
 
@@ -146,6 +147,23 @@ public class CollapsibleCalendar extends UICalendar {
         }
     }
 
+    public void setTodaysEvaluation() {
+        Calendar today = new GregorianCalendar();
+        Day dayToday = new Day(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
+        today.get(Calendar.DAY_OF_MONTH);
+        int eventTagColor = mTodayNeutralEventTagColor;
+        if (mDayEvaluator != null) {
+            if (mDayEvaluator.doesRatingExistForDay(dayToday)) {
+                if (mDayEvaluator.isDayRatedPositive(dayToday)) {
+                    eventTagColor = mTodayPositiveEventTagColor;
+                } else {
+                    eventTagColor = mTodayNegativeEventTagColor;
+                }
+            }
+        }
+        addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
+    }
+
     @Override
     protected void redraw() {
         // redraw all views of week
@@ -164,6 +182,7 @@ public class CollapsibleCalendar extends UICalendar {
                 Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
                 if(mDayEvaluator != null) {
                     if(mDayEvaluator.doesRatingExistForDay(day)) {
+                        txtDay.setTextColor(getSelectedItemTextColor());
                         if(mDayEvaluator.isDayRatedPositive(day)) {
                             dayBackgroundDrawable = mPositiveDayBackgroundDrawable;
                         } else {
@@ -630,7 +649,6 @@ public class CollapsibleCalendar extends UICalendar {
             expandIconView.setVisibility(GONE);
         }
     }
-
 
 
 }
