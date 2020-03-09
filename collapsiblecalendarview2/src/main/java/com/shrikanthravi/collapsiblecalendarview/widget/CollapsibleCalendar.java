@@ -151,7 +151,7 @@ public class CollapsibleCalendar extends UICalendar {
         Calendar today = new GregorianCalendar();
         Day dayToday = new Day(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
         today.get(Calendar.DAY_OF_MONTH);
-        int eventTagColor = mTodayNeutralEventTagColor;
+        int eventTagColor;
         if (mDayEvaluator != null) {
             if (mDayEvaluator.doesRatingExistForDay(dayToday)) {
                 if (mDayEvaluator.isDayRatedPositive(dayToday)) {
@@ -159,9 +159,9 @@ public class CollapsibleCalendar extends UICalendar {
                 } else {
                     eventTagColor = mTodayNegativeEventTagColor;
                 }
+                addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
             }
         }
-        addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
     }
 
     @Override
