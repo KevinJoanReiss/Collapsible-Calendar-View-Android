@@ -173,37 +173,59 @@ public class CollapsibleCalendar extends UICalendar {
                 ((TextView) rowWeek.getChildAt(i)).setTextColor(getTextColor());
             }
         }
+
         // redraw all views of day
         if (mAdapter != null) {
             for (int i = 0; i < mAdapter.getCount(); i++) {
-                Day day = mAdapter.getItem(i);
-                View view = mAdapter.getView(i);
-                TextView txtDay = (TextView) view.findViewById(R.id.txt_day);
-                Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
-                if(mDayEvaluator != null) {
-                    if(mDayEvaluator.doesRatingExistForDay(day)) {
-                        txtDay.setTextColor(getSelectedItemTextColor());
-                        if(mDayEvaluator.isDayRatedPositive(day)) {
-                            dayBackgroundDrawable = mPositiveDayBackgroundDrawable;
+                final Day day = mAdapter.getItem(i);
+                final View view = mAdapter.getView(i);
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final TextView txtDay = view.findViewById(R.id.txt_day);
+                        Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
+                        int textColor;
+
+                        //check if the user has registered a DayEvaluator
+                        //if so, set the textColor and background accordingly
+                        if(mDayEvaluator != null) {
+                            if(mDayEvaluator.doesRatingExistForDay(day)) {
+                                textColor = getSelectedItemTextColor();
+                                if(mDayEvaluator.isDayRatedPositive(day)) {
+                                    dayBackgroundDrawable = mPositiveDayBackgroundDrawable;
+                                } else {
+                                    dayBackgroundDrawable = mNegativeDayBackgroundDrawable;
+                                }
+                            } else {
+                                textColor = getTextColor();
+                            }
                         } else {
-                            dayBackgroundDrawable = mNegativeDayBackgroundDrawable;
+                            textColor = getTextColor();
                         }
+
+                        // set today's item
+                        if (isToady(day)) {
+                            dayBackgroundDrawable = getTodayItemBackgroundDrawable();
+                            textColor = getTodayItemTextColor();
+                        }
+
+                        // set the selected item
+                        if (isSelectedDay(day)) {
+                            dayBackgroundDrawable = getSelectedItemBackgroundDrawable();
+                            textColor = getSelectedItemTextColor();
+                        }
+
+                        final Drawable resultDayBackgroundDrawable = dayBackgroundDrawable;
+                        final int resultTextColor = textColor;
+                        txtDay.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                txtDay.setBackgroundDrawable(resultDayBackgroundDrawable);
+                                txtDay.setTextColor(resultTextColor);
+                            }
+                        });
                     }
-                }
-                txtDay.setBackgroundDrawable(dayBackgroundDrawable);
-                txtDay.setTextColor(getTextColor());
-
-                // set today's item
-                if (isToady(day)) {
-                    txtDay.setBackgroundDrawable(getTodayItemBackgroundDrawable());
-                    txtDay.setTextColor(getTodayItemTextColor());
-                }
-
-                // set the selected item
-                if (isSelectedDay(day)) {
-                    txtDay.setBackgroundDrawable(getSelectedItemBackgroundDrawable());
-                    txtDay.setTextColor(getSelectedItemTextColor());
-                }
+                }).start();
             }
         }
     }
