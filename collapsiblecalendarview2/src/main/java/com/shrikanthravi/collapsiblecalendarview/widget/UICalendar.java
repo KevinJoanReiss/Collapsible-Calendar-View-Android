@@ -204,7 +204,7 @@ public abstract class UICalendar extends LinearLayout {
 
         int todayNegativeEventTagColor =
                 attrs.getColor(R.styleable.UICalendar_negativeDayTag_color, mTodayNegativeEventTagColor);
-        if(todayPositiveEventTagColor != mTodayNegativeEventTagColor) {
+        if(todayNegativeEventTagColor != mTodayNegativeEventTagColor) {
             mTodayNegativeEventTagColor = todayNegativeEventTagColor;
         }
 

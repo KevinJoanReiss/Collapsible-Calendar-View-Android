@@ -6,7 +6,6 @@ package com.shrikanthravi.collapsiblecalendarview.widget;
 
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -148,19 +147,29 @@ public class CollapsibleCalendar extends UICalendar {
     }
 
     public void setTodaysEvaluation() {
-        Calendar today = new GregorianCalendar();
+        final Calendar today = new GregorianCalendar();
         Day dayToday = new Day(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
         today.get(Calendar.DAY_OF_MONTH);
-        int eventTagColor;
         if (mDayEvaluator != null) {
-            if (mDayEvaluator.doesRatingExistForDay(dayToday)) {
-                if (mDayEvaluator.isDayRatedPositive(dayToday)) {
-                    eventTagColor = mTodayPositiveEventTagColor;
-                } else {
-                    eventTagColor = mTodayNegativeEventTagColor;
+            mDayEvaluator.isDayRatedPositive(dayToday, new RatingCallback() {
+                int eventTagColor;
+
+                @Override
+                public void ratingDone(final Rating rating) {
+                    switch (rating) {
+                        case POSITIVE:
+                            eventTagColor = mTodayPositiveEventTagColor;
+                            addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
+                        case NEGATIVE:
+                            eventTagColor = mTodayNegativeEventTagColor;
+                            addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
+                        case NO_RATING:
+                            //nothing to do here
+                        default:
+                            //nothing to do here
+                    }
                 }
-                addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
-            }
+            });
         }
     }
 
@@ -179,53 +188,55 @@ public class CollapsibleCalendar extends UICalendar {
             for (int i = 0; i < mAdapter.getCount(); i++) {
                 final Day day = mAdapter.getItem(i);
                 final View view = mAdapter.getView(i);
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        final TextView txtDay = view.findViewById(R.id.txt_day);
-                        Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
-                        int textColor;
+                final TextView txtDay = view.findViewById(R.id.txt_day);
 
-                        //check if the user has registered a DayEvaluator
-                        //if so, set the textColor and background accordingly
-                        if(mDayEvaluator != null) {
-                            if(mDayEvaluator.doesRatingExistForDay(day)) {
-                                textColor = getSelectedItemTextColor();
-                                if(mDayEvaluator.isDayRatedPositive(day)) {
-                                    dayBackgroundDrawable = mPositiveDayBackgroundDrawable;
-                                } else {
-                                    dayBackgroundDrawable = mNegativeDayBackgroundDrawable;
+                int textColor = getTextColor();
+                Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
+
+                // set today's item
+                if (isToady(day)) {
+                    dayBackgroundDrawable = getTodayItemBackgroundDrawable();
+                    textColor = getTodayItemTextColor();
+                }
+
+                // set the selected item
+                if (isSelectedDay(day)) {
+                    dayBackgroundDrawable = getSelectedItemBackgroundDrawable();
+                    textColor = getSelectedItemTextColor();
+                }
+
+                txtDay.setBackgroundDrawable(dayBackgroundDrawable);
+                txtDay.setTextColor(textColor);
+
+                //check if the user has registered a DayEvaluator
+                //if so, set the textColor and background accordingly
+                if(mDayEvaluator != null) {
+                    mDayEvaluator.isDayRatedPositive(day, new RatingCallback() {
+                        Drawable ratedDayBackgroundDrawable = mNeutralDayBackgroundDrawable;
+                        int ratedDayTextColor;
+
+                        @Override
+                        public void ratingDone(final Rating rating) {
+                            switch (rating) {
+                                case POSITIVE:
+                                    ratedDayTextColor = getSelectedItemTextColor();
+                                    ratedDayBackgroundDrawable = mPositiveDayBackgroundDrawable;
+                                case NEGATIVE:
+                                    ratedDayTextColor = getSelectedItemTextColor();
+                                    ratedDayBackgroundDrawable = mNegativeDayBackgroundDrawable;
+                                default:
+                                    ratedDayTextColor = getTextColor();
+                            }
+                            txtDay.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    txtDay.setBackgroundDrawable(ratedDayBackgroundDrawable);
+                                    txtDay.setTextColor(ratedDayTextColor);
                                 }
-                            } else {
-                                textColor = getTextColor();
-                            }
-                        } else {
-                            textColor = getTextColor();
+                            });
                         }
-
-                        // set today's item
-                        if (isToady(day)) {
-                            dayBackgroundDrawable = getTodayItemBackgroundDrawable();
-                            textColor = getTodayItemTextColor();
-                        }
-
-                        // set the selected item
-                        if (isSelectedDay(day)) {
-                            dayBackgroundDrawable = getSelectedItemBackgroundDrawable();
-                            textColor = getSelectedItemTextColor();
-                        }
-
-                        final Drawable resultDayBackgroundDrawable = dayBackgroundDrawable;
-                        final int resultTextColor = textColor;
-                        txtDay.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                txtDay.setBackgroundDrawable(resultDayBackgroundDrawable);
-                                txtDay.setTextColor(resultTextColor);
-                            }
-                        });
-                    }
-                }).start();
+                    });
+                }
             }
         }
     }
@@ -639,11 +650,18 @@ public class CollapsibleCalendar extends UICalendar {
 
     public interface DayEvaluator {
 
-        // check if a rating does exist for a specific day
-        boolean doesRatingExistForDay(Day day);
-
         // check if the given day is rated positive
-        boolean isDayRatedPositive(Day day);
+        void isDayRatedPositive(Day day, RatingCallback callback);
+    }
+
+    public interface RatingCallback {
+        enum Rating {
+            NO_RATING,
+            POSITIVE,
+            NEGATIVE
+        }
+
+        void ratingDone(Rating rating);
     }
 
     public interface CalendarListener {
