@@ -192,50 +192,62 @@ public class CollapsibleCalendar extends UICalendar {
 
                 int textColor = getTextColor();
                 Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
+                boolean isTodayOrSelected = false;
 
                 // set today's item
                 if (isToady(day)) {
+                    isTodayOrSelected = true;
                     dayBackgroundDrawable = getTodayItemBackgroundDrawable();
                     textColor = getTodayItemTextColor();
                 }
 
                 // set the selected item
                 if (isSelectedDay(day)) {
+                    isTodayOrSelected = true;
                     dayBackgroundDrawable = getSelectedItemBackgroundDrawable();
                     textColor = getSelectedItemTextColor();
                 }
 
-                txtDay.setBackgroundDrawable(dayBackgroundDrawable);
-                txtDay.setTextColor(textColor);
+                if(isTodayOrSelected) {
+                    txtDay.setBackgroundDrawable(dayBackgroundDrawable);
+                    txtDay.setTextColor(textColor);
+                } else {
+                    //check if the user has registered a DayEvaluator
+                    //if so, set the textColor and background accordingly
+                    if(mDayEvaluator != null) {
+                        mDayEvaluator.isDayRatedPositive(day, new RatingCallback() {
 
-                //check if the user has registered a DayEvaluator
-                //if so, set the textColor and background accordingly
-                if(mDayEvaluator != null) {
-                    mDayEvaluator.isDayRatedPositive(day, new RatingCallback() {
-                        Drawable ratedDayBackgroundDrawable = mNeutralDayBackgroundDrawable;
-                        int ratedDayTextColor;
+                            @Override
+                            public void ratingDone(final Rating rating) {
+                                Drawable ratedDayBackgroundDrawable = mNeutralDayBackgroundDrawable;
+                                int ratedDayTextColor = getTextColor();
 
-                        @Override
-                        public void ratingDone(final Rating rating) {
-                            switch (rating) {
-                                case POSITIVE:
-                                    ratedDayTextColor = getSelectedItemTextColor();
-                                    ratedDayBackgroundDrawable = mPositiveDayBackgroundDrawable;
-                                case NEGATIVE:
-                                    ratedDayTextColor = getSelectedItemTextColor();
-                                    ratedDayBackgroundDrawable = mNegativeDayBackgroundDrawable;
-                                default:
-                                    ratedDayTextColor = getTextColor();
-                            }
-                            txtDay.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    txtDay.setBackgroundDrawable(ratedDayBackgroundDrawable);
-                                    txtDay.setTextColor(ratedDayTextColor);
+                                switch (rating) {
+                                    case POSITIVE:
+                                        ratedDayTextColor = getSelectedItemTextColor();
+                                        ratedDayBackgroundDrawable = mPositiveDayBackgroundDrawable;
+                                        break;
+                                    case NEGATIVE:
+                                        ratedDayTextColor = getSelectedItemTextColor();
+                                        ratedDayBackgroundDrawable = mNegativeDayBackgroundDrawable;
+                                        break;
+                                    default:
+                                        //nothing to do here
                                 }
-                            });
-                        }
-                    });
+
+                                final Drawable resulBackgroundDrawable = ratedDayBackgroundDrawable;
+                                final int resultTextColor = ratedDayTextColor;
+
+                                txtDay.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        txtDay.setBackgroundDrawable(resulBackgroundDrawable);
+                                        txtDay.setTextColor(resultTextColor);
+                                    }
+                                });
+                            }
+                        });
+                    }
                 }
             }
         }
@@ -245,7 +257,6 @@ public class CollapsibleCalendar extends UICalendar {
     protected void reload() {
         if (mAdapter != null) {
             mAdapter.refresh();
-
             // reset UI
             mTxtTitle.setText(DateUtils.getFormattedDateString(
                     getContext(),
