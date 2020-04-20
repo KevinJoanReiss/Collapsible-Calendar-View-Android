@@ -159,11 +159,11 @@ public class CollapsibleCalendar extends UICalendar {
                     switch (rating) {
                         case POSITIVE:
                             eventTagColor = mTodayPositiveEventTagColor;
-                            addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
+                            //addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
                             break;
                         case NEGATIVE:
                             eventTagColor = mTodayNegativeEventTagColor;
-                            addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
+                            //addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
                             break;
                         case NO_RATING:
                             //nothing to do here
