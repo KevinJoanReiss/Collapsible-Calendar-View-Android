@@ -43,6 +43,7 @@ public class CollapsibleCalendar extends UICalendar {
     private boolean mIsWaitingForUpdate = false;
 
     private int mCurrentWeekIndex;
+    private Drawable todayBackground = getPositiveTodayItemBackgroundDrawable();
 
     public CollapsibleCalendar(Context context) {
         super(context);
@@ -159,11 +160,11 @@ public class CollapsibleCalendar extends UICalendar {
                     switch (rating) {
                         case POSITIVE:
                             eventTagColor = mTodayPositiveEventTagColor;
-                            //addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
+                            changeTodayBackground(getPositiveTodayItemBackgroundDrawable());
                             break;
                         case NEGATIVE:
                             eventTagColor = mTodayNegativeEventTagColor;
-                            //addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
+                            changeTodayBackground(getNegativeTodayItemBackgroundDrawable());
                             break;
                         case NO_RATING:
                             //nothing to do here
@@ -174,6 +175,10 @@ public class CollapsibleCalendar extends UICalendar {
                 }
             });
         }
+    }
+
+    public void changeTodayBackground(Drawable todayBackground) {
+        this.todayBackground = todayBackground;
     }
 
     @Override
@@ -194,13 +199,13 @@ public class CollapsibleCalendar extends UICalendar {
                 final TextView txtDay = view.findViewById(R.id.txt_day);
 
                 int textColor = getTextColor();
-                Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
+                Drawable dayBackgroundDrawable = todayBackground;
                 boolean isTodayOrSelected = false;
 
                 // set today's item
                 if (isToady(day)) {
                     isTodayOrSelected = true;
-                    dayBackgroundDrawable = getTodayItemBackgroundDrawable();
+                    dayBackgroundDrawable = todayBackground;
                     textColor = getTodayItemTextColor();
                 }
 
