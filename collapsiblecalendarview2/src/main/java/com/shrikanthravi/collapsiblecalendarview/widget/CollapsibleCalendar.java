@@ -179,6 +179,7 @@ public class CollapsibleCalendar extends UICalendar {
 
     public void changeTodayBackground(Drawable todayBackground) {
         this.todayBackground = todayBackground;
+        reload();
     }
 
     @Override
@@ -234,12 +235,10 @@ public class CollapsibleCalendar extends UICalendar {
                                     case POSITIVE:
                                         ratedDayTextColor = getSelectedItemTextColor();
                                         ratedDayBackgroundDrawable = mPositiveDayBackgroundDrawable;
-                                        reload();
                                         break;
                                     case NEGATIVE:
                                         ratedDayTextColor = getSelectedItemTextColor();
                                         ratedDayBackgroundDrawable = mNegativeDayBackgroundDrawable;
-                                        reload();
                                         break;
                                     default:
                                         //nothing to do here
