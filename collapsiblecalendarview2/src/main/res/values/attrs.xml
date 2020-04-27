@@ -38,9 +38,7 @@
 
 
         <attr name="todayItem_textColor" format="color" />
-        <attr name="negative_todayItem_background" format="integer" />
-
-        <attr name="positive_todayItem_background" format="integer"/>
+        <attr name="todayItem_background" format="integer" />
 
         <attr name="selectedItem_textColor" format="color" />
         <attr name="selectedItem_background" format="integer" />

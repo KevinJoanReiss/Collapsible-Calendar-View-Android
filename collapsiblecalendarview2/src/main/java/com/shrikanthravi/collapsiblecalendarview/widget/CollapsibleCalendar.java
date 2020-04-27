@@ -43,7 +43,7 @@ public class CollapsibleCalendar extends UICalendar {
     private boolean mIsWaitingForUpdate = false;
 
     private int mCurrentWeekIndex;
-    private Drawable todayBackground = getPositiveTodayItemBackgroundDrawable();
+    //private Drawable todayBackground = getPositiveTodayItemBackgroundDrawable();
 
     public CollapsibleCalendar(Context context) {
         super(context);
@@ -154,17 +154,18 @@ public class CollapsibleCalendar extends UICalendar {
         if (mDayEvaluator != null) {
             mDayEvaluator.isDayRatedPositive(dayToday, new RatingCallback() {
                 int eventTagColor;
+                boolean isPositive;
 
                 @Override
                 public void ratingDone(final Rating rating) {
                     switch (rating) {
                         case POSITIVE:
                             eventTagColor = mTodayPositiveEventTagColor;
-                            changeTodayBackground(getPositiveTodayItemBackgroundDrawable());
+                            addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
                             break;
                         case NEGATIVE:
                             eventTagColor = mTodayNegativeEventTagColor;
-                            changeTodayBackground(getNegativeTodayItemBackgroundDrawable());
+                            addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
                             break;
                         case NO_RATING:
                             //nothing to do here
@@ -175,11 +176,6 @@ public class CollapsibleCalendar extends UICalendar {
                 }
             });
         }
-    }
-
-    public void changeTodayBackground(Drawable todayBackground) {
-        this.todayBackground = todayBackground;
-        reload();
     }
 
     @Override
@@ -200,25 +196,25 @@ public class CollapsibleCalendar extends UICalendar {
                 final TextView txtDay = view.findViewById(R.id.txt_day);
 
                 int textColor = getTextColor();
-                Drawable dayBackgroundDrawable = todayBackground;
+                //Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
                 boolean isTodayOrSelected = false;
 
                 // set today's item
                 if (isToady(day)) {
                     isTodayOrSelected = true;
-                    dayBackgroundDrawable = todayBackground;
+                    //dayBackgroundDrawable = getTodayItemBackgroundDrawable();
                     textColor = getTodayItemTextColor();
                 }
 
                 // set the selected item
                 if (isSelectedDay(day)) {
                     isTodayOrSelected = true;
-                    dayBackgroundDrawable = getSelectedItemBackgroundDrawable();
+                    //dayBackgroundDrawable = getSelectedItemBackgroundDrawable();
                     textColor = getSelectedItemTextColor();
                 }
 
                 if(isTodayOrSelected) {
-                    txtDay.setBackgroundDrawable(dayBackgroundDrawable);
+                    //txtDay.setBackgroundDrawable(dayBackgroundDrawable);
                     txtDay.setTextColor(textColor);
                 } else {
                     //check if the user has registered a DayEvaluator

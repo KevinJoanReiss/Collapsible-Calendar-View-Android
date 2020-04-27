@@ -114,7 +114,7 @@ public class CalendarAdapter {
 
             View view = mInflater.inflate(R.layout.day_layout, null);
             TextView txtDay = (TextView) view.findViewById(R.id.txt_day);
-            ImageView imgEventTag = (ImageView) view.findViewById(R.id.img_event_tag);
+            //ImageView imgEventTag = (ImageView) view.findViewById(R.id.img_event_tag);
 
             txtDay.setText(String.valueOf(day.getDay()));
             if (day.getMonth() != mCal.get(Calendar.MONTH)) {
@@ -126,8 +126,12 @@ public class CalendarAdapter {
                 if (day.getYear() == event.getYear()
                         && day.getMonth() == event.getMonth()
                         && day.getDay() == event.getDay()) {
-                    imgEventTag.setVisibility(View.VISIBLE);
-                    imgEventTag.setColorFilter(event.getColor(),PorterDuff.Mode.SRC_ATOP);
+                    //imgEventTag.setVisibility(View.VISIBLE);
+                    if(event.getColor() == R.styleable.UICalendar_positiveDayTag_color)
+                        txtDay.setBackgroundResource(R.drawable.circle_green);
+                    if(event.getColor() == R.styleable.UICalendar_negativeDayTag_color)
+                        txtDay.setBackgroundResource(R.drawable.circle_red);
+                    //imgEventTag.setColorFilter(event.getColor(),PorterDuff.Mode.SRC_ATOP);
                 }
             }
 
