@@ -35,15 +35,14 @@ public class CollapsibleCalendar extends UICalendar {
     private CalendarListener mListener;
     private DayEvaluator mDayEvaluator;
 
-    private boolean expanded=false;
-
+    private boolean expanded = false;
+    private Drawable todayBackground = getTodayItemBackgroundDrawable();
     private int mInitHeight = 0;
 
     private Handler mHandler = new Handler();
     private boolean mIsWaitingForUpdate = false;
 
     private int mCurrentWeekIndex;
-    //private Drawable todayBackground = getPositiveTodayItemBackgroundDrawable();
 
     public CollapsibleCalendar(Context context) {
         super(context);
@@ -62,12 +61,9 @@ public class CollapsibleCalendar extends UICalendar {
         super.init(context);
 
 
-
-            Calendar cal = Calendar.getInstance();
-            CalendarAdapter adapter = new CalendarAdapter(context, cal);
-            setAdapter(adapter);
-
-
+        Calendar cal = Calendar.getInstance();
+        CalendarAdapter adapter = new CalendarAdapter(context, cal);
+        setAdapter(adapter);
 
 
         // bind events
@@ -100,16 +96,15 @@ public class CollapsibleCalendar extends UICalendar {
             }
         });
 
-        expandIconView.setState(ExpandIconView.MORE,true);
+        expandIconView.setState(ExpandIconView.MORE, true);
 
 
         expandIconView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(expanded){
+                if (expanded) {
                     collapse(400);
-                }
-                else{
+                } else {
                     expand(400);
                 }
             }
@@ -121,9 +116,6 @@ public class CollapsibleCalendar extends UICalendar {
                 collapseTo(mCurrentWeekIndex);
             }
         });
-
-
-
     }
 
     @Override
@@ -147,35 +139,8 @@ public class CollapsibleCalendar extends UICalendar {
         }
     }
 
-    public void setTodaysEvaluation() {
-        final Calendar today = new GregorianCalendar();
-        Day dayToday = new Day(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH));
-        today.get(Calendar.DAY_OF_MONTH);
-        if (mDayEvaluator != null) {
-            mDayEvaluator.isDayRatedPositive(dayToday, new RatingCallback() {
-                int eventTagColor;
-                boolean isPositive;
-
-                @Override
-                public void ratingDone(final Rating rating) {
-                    switch (rating) {
-                        case POSITIVE:
-                            eventTagColor = mTodayPositiveEventTagColor;
-                            addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
-                            break;
-                        case NEGATIVE:
-                            eventTagColor = mTodayNegativeEventTagColor;
-                            addEventTag(today.get(Calendar.YEAR), today.get(Calendar.MONTH), today.get(Calendar.DAY_OF_MONTH), eventTagColor);
-                            break;
-                        case NO_RATING:
-                            //nothing to do here
-                            break;
-                        default:
-                            //nothing to do here
-                    }
-                }
-            });
-        }
+    public void changeTodayBackground(Drawable todayBackground) {
+        this.todayBackground = todayBackground;
     }
 
     @Override
@@ -196,30 +161,30 @@ public class CollapsibleCalendar extends UICalendar {
                 final TextView txtDay = view.findViewById(R.id.txt_day);
 
                 int textColor = getTextColor();
-                //Drawable dayBackgroundDrawable = mNeutralDayBackgroundDrawable;
+                Drawable dayBackgroundDrawable = todayBackground;
                 boolean isTodayOrSelected = false;
 
                 // set today's item
                 if (isToady(day)) {
                     isTodayOrSelected = true;
-                    //dayBackgroundDrawable = getTodayItemBackgroundDrawable();
+                    dayBackgroundDrawable = todayBackground;
                     textColor = getTodayItemTextColor();
                 }
 
                 // set the selected item
                 if (isSelectedDay(day)) {
                     isTodayOrSelected = true;
-                    //dayBackgroundDrawable = getSelectedItemBackgroundDrawable();
+                    dayBackgroundDrawable = getSelectedItemBackgroundDrawable();
                     textColor = getSelectedItemTextColor();
                 }
 
-                if(isTodayOrSelected) {
-                    //txtDay.setBackgroundDrawable(dayBackgroundDrawable);
+                if (isTodayOrSelected) {
+                    txtDay.setBackgroundDrawable(dayBackgroundDrawable);
                     txtDay.setTextColor(textColor);
                 } else {
                     //check if the user has registered a DayEvaluator
                     //if so, set the textColor and background accordingly
-                    if(mDayEvaluator != null) {
+                    if (mDayEvaluator != null) {
                         mDayEvaluator.isDayRatedPositive(day, new RatingCallback() {
 
                             @Override
@@ -384,19 +349,6 @@ public class CollapsibleCalendar extends UICalendar {
         mCurrentWeekIndex = getSuitableRowIndex();
     }
 
-    public void addEventTag(int numYear, int numMonth, int numDay) {
-        mAdapter.addEvent(new Event(numYear, numMonth, numDay,getEventColor()));
-
-        reload();
-    }
-
-    public void addEventTag(int numYear, int numMonth, int numDay,int color) {
-        mAdapter.addEvent(new Event(numYear, numMonth, numDay,color));
-
-
-        reload();
-    }
-
     public void prevMonth() {
         Calendar cal = mAdapter.getCalendar();
         if (cal.get(Calendar.MONTH) == cal.getActualMinimum(Calendar.MONTH)) {
@@ -452,14 +404,14 @@ public class CollapsibleCalendar extends UICalendar {
     }
 
     public Day getSelectedDay() {
-        if (getSelectedItem()==null){
+        if (getSelectedItem() == null) {
             Calendar cal = Calendar.getInstance();
             int day = cal.get(Calendar.DAY_OF_MONTH);
             int month = cal.get(Calendar.MONTH);
             int year = cal.get(Calendar.YEAR);
             return new Day(
                     year,
-                    month+1,
+                    month + 1,
                     day);
         }
         return new Day(
@@ -537,11 +489,13 @@ public class CollapsibleCalendar extends UICalendar {
 
                     mScrollViewBody.getLayoutParams().height = (interpolatedTime == 1)
                             ? targetHeight
-                            : currentHeight - (int) ((currentHeight - targetHeight) * interpolatedTime);
+                            :
+                            currentHeight - (int) ((currentHeight - targetHeight) * interpolatedTime);
                     mScrollViewBody.requestLayout();
 
                     if (mScrollViewBody.getMeasuredHeight() < topHeight + targetHeight) {
-                        int position = topHeight + targetHeight - mScrollViewBody.getMeasuredHeight();
+                        int position =
+                                topHeight + targetHeight - mScrollViewBody.getMeasuredHeight();
                         mScrollViewBody.smoothScrollTo(0, position);
                     }
 
@@ -557,7 +511,7 @@ public class CollapsibleCalendar extends UICalendar {
             startAnimation(anim);
         }
 
-        expandIconView.setState(ExpandIconView.MORE,true);
+        expandIconView.setState(ExpandIconView.MORE, true);
     }
 
     private void collapseTo(int index) {
@@ -609,7 +563,8 @@ public class CollapsibleCalendar extends UICalendar {
 
                     mScrollViewBody.getLayoutParams().height = (interpolatedTime == 1)
                             ? LinearLayout.LayoutParams.WRAP_CONTENT
-                            : currentHeight - (int) ((currentHeight - targetHeight) * interpolatedTime);
+                            :
+                            currentHeight - (int) ((currentHeight - targetHeight) * interpolatedTime);
                     mScrollViewBody.requestLayout();
 
                     if (interpolatedTime == 1) {
@@ -624,16 +579,16 @@ public class CollapsibleCalendar extends UICalendar {
             startAnimation(anim);
         }
 
-        expandIconView.setState(ExpandIconView.LESS,true);
+        expandIconView.setState(ExpandIconView.LESS, true);
     }
 
     @Override
     public void setState(int state) {
         super.setState(state);
-        if(state == STATE_COLLAPSED) {
+        if (state == STATE_COLLAPSED) {
             expanded = false;
         }
-        if(state == STATE_EXPANDED) {
+        if (state == STATE_EXPANDED) {
             expanded = true;
         }
     }
@@ -657,7 +612,9 @@ public class CollapsibleCalendar extends UICalendar {
         }
     }
 
-    public void setDayEvaluator(DayEvaluator evaluator) { mDayEvaluator = evaluator; }
+    public void setDayEvaluator(DayEvaluator evaluator) {
+        mDayEvaluator = evaluator;
+    }
 
     // callback
     public void setCalendarListener(CalendarListener listener) {
@@ -665,7 +622,6 @@ public class CollapsibleCalendar extends UICalendar {
     }
 
     public interface DayEvaluator {
-
         // check if the given day is rated positive
         void isDayRatedPositive(Day day, RatingCallback callback);
     }
@@ -698,14 +654,12 @@ public class CollapsibleCalendar extends UICalendar {
         void onWeekChange(int position);
     }
 
-    public void setExpandIconVisible(boolean visible){
-        if(visible){
+    public void setExpandIconVisible(boolean visible) {
+        if (visible) {
             expandIconView.setVisibility(VISIBLE);
-        }else {
+        } else {
             expandIconView.setVisibility(GONE);
         }
     }
-
-
 }
 
